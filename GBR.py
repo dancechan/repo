@@ -23,7 +23,7 @@ with header:
     st.text('This is to demonstrate how to manage MLOps')
 
 with dataset:
-    df = get_data('C:/Users/chans/OneDrive - TAL Apparel/Working Folder/Innovative Hub/YY Estimation/VNG Training Data.csv',encoding='cp1252')
+    df = get_data('VNG Training Data.csv',encoding='cp1252')
     max_record = df.shape[0]
     no_record_used = st.slider('No of record to be used',min_value=1000, max_value=max_record, value=max_record,step=1000)
 
