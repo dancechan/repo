@@ -23,7 +23,7 @@ def get_data(filename, encoding='cp1252'):
     df = pd.read_csv(filename, encoding='cp1252')
     return df
 
-df = get_data('C:/Users/chans/OneDrive - TAL Apparel/Working Folder/Innovative Hub/YY Estimation/VNG Training Data.csv',encoding='cp1252')
+df = get_data('VNG Training Data.csv',encoding='cp1252')
 max_record = df.shape[0]
 y = df.iloc[:, 0].values
 X = df.iloc[:, 2:14].values
