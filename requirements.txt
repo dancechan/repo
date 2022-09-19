@@ -4,4 +4,4 @@ pandas
 streamlit
 sklearn
 streamlit_option_menu
-sqlite
+pysqlite3
