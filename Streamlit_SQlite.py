@@ -1,8 +1,10 @@
+from datetime import date
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import streamlit as st
 from streamlit_option_menu import option_menu
+from st_aggrid import AgGrid
 from sklearn import ensemble
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import mean_squared_error
@@ -23,7 +25,7 @@ def get_data(filename, encoding='cp1252'):
     df = pd.read_csv(filename, encoding='cp1252')
     return df
 
-df = get_data('VNG Training Data.csv',encoding='cp1252')
+df = get_data('C:/Users/chans/OneDrive - TAL Apparel/Working Folder/Innovative Hub/YY Estimation/VNG Training Data.csv',encoding='cp1252')
 max_record = df.shape[0]
 y = df.iloc[:, 0].values
 X = df.iloc[:, 2:14].values
@@ -63,6 +65,7 @@ if selected == "Dataset":
         st.text("Net YY Distribution")
         sales_dist = pd.DataFrame(df.iloc[:no_record_used,0].values,columns=["Net YY"])
         st.line_chart(sales_dist)
+        AgGrid(df.iloc[:10,:])
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=13)
 
@@ -224,6 +227,7 @@ if selected == "Prediction":
                 long_sleeve = 1
             else:
                 long_sleeve =0
+            updated_date = date.today()
 
             predictor = [solid,stripe,check,one_way_cut,two_way_cut,long_sleeve,plan_cut_qty,repeat_x,repeat_y,avg_neck_size,double_cuff,marker_width]
             X_input = np.array(predictor).reshape(1,-1)
@@ -248,7 +252,8 @@ if selected == "Prediction":
             c = conn.cursor()
 
             c.execute('''CREATE TABLE if not exists QUOTATION
-                        (customer text NOT NULL,
+                        (updated_date text NOT NULL,
+                        customer text NOT NULL,
                         solid Integer NOT NULL,
                         stripe Integer NOT NULL,
                         chk Integer Not NULL,
@@ -263,22 +268,45 @@ if selected == "Prediction":
                         marker_width Real NOT NULL,
                         predicted_yy Real NOT NULL);''')
 
-            st.write(customer, solid, stripe, check, one_way_cut, two_way_cut, long_sleeve, plan_cut_qty, repeat_x, repeat_y,
-             avg_neck_size, double_cuff, marker_width, predicted_yy)
 
-            c.execute("INSERT INTO QUOTATION (customer,solid,stripe,chk,one_way_cut,two_way_cut,long_sleeve,plan_cut_qty,repeat_x,repeat_y,avg_neck_size,double_cuff,marker_width,predicted_yy) \
-                  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (customer, solid, stripe, check, one_way_cut, two_way_cut, long_sleeve, plan_cut_qty, repeat_x, repeat_y,
+            # st.write(customer, solid, stripe, check, one_way_cut, two_way_cut, long_sleeve, plan_cut_qty, repeat_x, repeat_y,
+            # avg_neck_size, double_cuff, marker_width, predicted_yy)
+
+            c.execute("INSERT INTO QUOTATION (updated_date,customer,solid,stripe,chk,one_way_cut,two_way_cut,long_sleeve,plan_cut_qty,repeat_x,repeat_y,avg_neck_size,double_cuff,marker_width,predicted_yy) \
+                  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (updated_date,customer, solid, stripe, check, one_way_cut, two_way_cut, long_sleeve, plan_cut_qty, repeat_x, repeat_y,
              avg_neck_size, double_cuff, marker_width,predicted_yy))
-            st.write("Inserted")
-            
+            conn.commit()
+
             statement = '''SELECT * FROM QUOTATION'''
             c.execute(statement)
+            db = pd.read_sql_query(statement,conn)
+            AgGrid(db)
             print("All the data")
             output = c.fetchall()
             for row in output:
                 st.write(row)
-            
+
             conn.commit()
             conn.close()
 
 
+    @st.cache
+    def convert_df(df):
+        # IMPORTANT: Cache the conversion to prevent computation on every rerun
+        return df.to_csv().encode('utf-8')
+
+
+    conn = sqlite3.connect('test.db')
+    c = conn.cursor()
+    statement_1 = '''SELECT * FROM QUOTATION'''
+    c.execute(statement_1)
+    conn.commit()
+    db_1 = pd.read_sql_query(statement_1, conn)
+    csv = convert_df(db_1)
+    conn.close()
+    st.download_button(
+        label="Download data as CSV",
+        data=csv,
+        file_name='db_1.csv',
+        mime='text/csv',
+        )
