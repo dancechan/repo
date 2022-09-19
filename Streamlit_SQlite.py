@@ -270,7 +270,14 @@ if selected == "Prediction":
                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (customer, solid, stripe, check, one_way_cut, two_way_cut, long_sleeve, plan_cut_qty, repeat_x, repeat_y,
              avg_neck_size, double_cuff, marker_width,predicted_yy))
             st.write("Inserted")
-            conn.commit()
+            
+            statement = '''SELECT * FROM QUOTATION'''
+            c.execute(statement)
+            print("All the data")
+            output = c.fetchall()
+            for row in output:
+                st.write(row)
+            
             conn.commit()
             conn.close()
 
