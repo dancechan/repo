@@ -269,7 +269,7 @@ if selected == "Prediction":
             c.execute("INSERT INTO QUOTATION (customer,solid,stripe,chk,one_way_cut,two_way_cut,long_sleeve,plan_cut_qty,repeat_x,repeat_y,avg_neck_size,double_cuff,marker_width,predicted_yy) \
                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (customer, solid, stripe, check, one_way_cut, two_way_cut, long_sleeve, plan_cut_qty, repeat_x, repeat_y,
              avg_neck_size, double_cuff, marker_width,predicted_yy))
-
+            st.write("Inserted")
             conn.commit()
             conn.commit()
             conn.close()
