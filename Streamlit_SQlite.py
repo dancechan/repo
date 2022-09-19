@@ -250,8 +250,8 @@ if selected == "Prediction":
 
             conn = sqlite3.connect('test.db')
             c = conn.cursor()
-            del = st.radio("Delete Quotation Table?",('Y', 'N'),index=1,horizontal=True)
-            if del=='Y':
+            del_table = st.radio("Delete Quotation Table?",('Y', 'N'),index=1,horizontal=True)
+            if del_table=='Y':
                 c.execute('''DROP TABLE QUOTATION''')
             else:
                 st.write('Quotation table exist')
