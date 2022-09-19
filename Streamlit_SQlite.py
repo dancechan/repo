@@ -251,7 +251,7 @@ if selected == "Prediction":
             conn = sqlite3.connect('test.db')
             c = conn.cursor()
 
-            c.execute('''CREATE TABLE if not exists QUOTATION
+            c.execute('''CREATE TABLE QUOTATION
                         (updated_date text NOT NULL,
                         customer text NOT NULL,
                         solid Integer NOT NULL,
