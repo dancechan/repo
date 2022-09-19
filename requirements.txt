@@ -5,4 +5,4 @@ streamlit
 sklearn
 streamlit_option_menu
 pysqlite3
-st_aggrid
+streamlit-aggrid
